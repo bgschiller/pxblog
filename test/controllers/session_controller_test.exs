@@ -1,12 +1,12 @@
 defmodule Pxblog.SessionControllerTest do
   use Pxblog.ConnCase
   alias Pxblog.User
-  alias Pxblog.TestHelper
+
+  import Pxblog.Factory
 
   setup do
-    {:ok, role} = TestHelper.create_role(%{name: "User", admin: false})
-    {:ok, _user} = TestHelper.create_user(role, %{username: "test", password: "test",
-      password_confirmation: "test", email: "test@test.com"})
+    role = insert(:role)
+    _user = insert(:user, role: role, username: "test")
     {:ok, conn: build_conn()}
   end
 
@@ -16,7 +16,7 @@ defmodule Pxblog.SessionControllerTest do
   end
 
   test "creates a new user session for a valid user", %{conn: conn} do
-    conn = post conn, session_path(conn, :create), user: %{username: "test", password: "test"}
+    conn = post conn, session_path(conn, :create), user: %{username: "test", password: "test1234"}
     assert get_session(conn, :current_user)
     assert get_flash(conn, :info) == "Sign in successful!"
     assert redirected_to(conn) == page_path(conn, :index)

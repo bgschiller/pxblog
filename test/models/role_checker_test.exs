@@ -1,17 +1,18 @@
 defmodule Pxblog.RoleCheckerTest do
   use Pxblog.ModelCase
-  alias Pxblog.TestHelper
   alias Pxblog.RoleChecker
 
+  import Pxblog.Factory
+
   test "is_admin? is true when user has an admin role" do
-    {:ok, role} = TestHelper.create_role(%{name: "admin", admin: true})
-    {:ok, user} = TestHelper.create_user(role, %{email: "test@test.com", username: "user", password: "test", password_confirmation: "test"})
+    role = insert(:role, admin: true)
+    user = insert(:user, role: role)
     assert RoleChecker.is_admin?(user)
   end
 
   test "is_admin? is false when user does not have an admin role" do
-    {:ok, role} = TestHelper.create_role(%{name: "User", admin: false})
-    {:ok, user} = TestHelper.create_user(role, %{email: "test@test.com", username: "user", password: "test", password_confirmation: "test"})
+    role = insert(:role)
+    user = insert(:user, role: role)
     refute RoleChecker.is_admin?(user)
   end
 end
